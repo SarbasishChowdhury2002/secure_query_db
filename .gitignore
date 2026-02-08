@@ -1,7 +1,13 @@
-# Virtual environments
+# Virtual environment
 venv/
-.venv/
 
 # Python cache
 __pycache__/
 *.pyc
+
+# Encryption key (must NEVER be committed)
+aes.key
+
+# OS / editor junk
+.DS_Store
+.vscode/
