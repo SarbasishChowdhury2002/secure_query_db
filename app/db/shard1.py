@@ -29,3 +29,21 @@ def insert_user(username, email, password):
         pass_nonce
     ))
     conn.commit()
+
+
+
+# Simulated encrypted shard
+
+SHARD_DATA = [
+    {
+        "id": "s1-1",
+        "tokens": [
+            "token_salary",
+            "token_bonus"
+        ],
+        "ciphertext": "ENCRYPTED_PAYROLL_DATA"
+    }
+]
+
+def read_all():
+    return SHARD_DATA
