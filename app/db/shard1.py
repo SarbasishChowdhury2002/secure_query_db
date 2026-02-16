@@ -34,6 +34,7 @@ def insert_user(username, email, password):
 
 # Simulated encrypted shard
 
+'''
 SHARD_DATA = [
     {
         "id": "s1-1",
@@ -44,6 +45,20 @@ SHARD_DATA = [
         "ciphertext": "ENCRYPTED_PAYROLL_DATA"
     }
 ]
+'''
+
+# Simulate real encryption
+nonce, ciphertext = encrypt_data("Employee Salary: 100000")
+
+SHARD_DATA = [
+    {
+        "id": "s1-1",
+        "tokens": ["token_salary", "token_bonus"],
+        "nonce": nonce,
+        "ciphertext": ciphertext
+    }
+]
+
 
 def read_all():
     return SHARD_DATA

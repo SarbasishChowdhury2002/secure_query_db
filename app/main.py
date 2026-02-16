@@ -64,7 +64,7 @@ results = engine.and_search(["token_salary", "token_bonus"])
 print(results)
 '''
 
-
+'''
 #week 3 rbac testing
 from app.db.secure_query import SecureQueryEngine
 from app.db import shard1, shard2, shard3
@@ -83,6 +83,26 @@ print("Guest search:")
 print(engine.and_search(
     ["token_salary"],
     user_role="guest"
+))
+'''
+
+
+# week 3 secure read + controlled decryption test
+from app.db.secure_query import SecureQueryEngine
+from app.db import shard1, shard2, shard3
+
+engine = SecureQueryEngine([shard1, shard2, shard3])
+
+print("Admin read:")
+print(engine.secure_read(
+    ["token_salary", "token_bonus"],
+    user_role="admin"
+))
+
+print("\nAnalyst read:")
+print(engine.secure_read(
+    ["token_salary", "token_bonus"],
+    user_role="analyst"
 ))
 
 
