@@ -86,7 +86,7 @@ print(engine.and_search(
 ))
 '''
 
-
+'''
 # week 3 secure read + controlled decryption test
 from app.db.secure_query import SecureQueryEngine
 from app.db import shard1, shard2, shard3
@@ -104,6 +104,24 @@ print(engine.secure_read(
     ["token_salary", "token_bonus"],
     user_role="analyst"
 ))
+'''
 
 
+# week 3 password hashing test
+from app.crypto.password_hash import PasswordManager
+
+pm = PasswordManager()
+
+print("\n--- Password Hashing Test ---")
+
+password = "securePassword123"
+
+hashed = pm.hash_password(password)
+print("Hashed password:", hashed)
+
+print("Verify correct password:",
+      pm.verify_password("securePassword123", hashed))
+
+print("Verify wrong password:",
+      pm.verify_password("wrongPassword", hashed))
 
