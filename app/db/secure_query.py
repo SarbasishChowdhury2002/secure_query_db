@@ -50,7 +50,8 @@ class SecureQueryEngine:
             decrypted_record = record.copy()
             decrypted_record["plaintext"] = decrypt_data(
                 record["nonce"],
-                record["ciphertext"]
+                record["ciphertext"],
+                record["key_version"]
             )
             decrypted_results.append(decrypted_record)
 

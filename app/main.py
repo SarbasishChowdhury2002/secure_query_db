@@ -106,7 +106,7 @@ print(engine.secure_read(
 ))
 '''
 
-
+'''
 # week 3 password hashing test
 from app.crypto.password_hash import PasswordManager
 
@@ -124,4 +124,28 @@ print("Verify correct password:",
 
 print("Verify wrong password:",
       pm.verify_password("wrongPassword", hashed))
+'''
 
+'''
+# week 3 encryption key versioning test
+from app.crypto.encrypt import encrypt_data, decrypt_data
+
+print("\n--- Key Version Test ---")
+
+nonce, cipher, version = encrypt_data("Test Message")
+print("Key Version:", version)
+
+plaintext = decrypt_data(nonce, cipher, version)
+print("Decrypted:", plaintext)
+'''
+
+
+# week 3 key rotation test
+from app.crypto.encrypt import key_manager
+
+print("\nCurrent Key Version:", key_manager.current_version)
+
+print("Rotating key...")
+key_manager.rotate_key()
+
+print("New Key Version:", key_manager.current_version)

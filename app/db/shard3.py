@@ -16,35 +16,40 @@ def insert_user(username, email, password):
     Inserts encrypted user data into shard2.
     Shard selection logic will be handled by the coordinator layer.
     """
-    email_nonce, email_cipher = encrypt_data(email)
-    pass_nonce, pass_cipher = encrypt_data(password)
+    email_nonce, email_cipher, email_key_version = encrypt_data(email)
+    pass_nonce, pass_cipher, pass_key_version = encrypt_data(password)
 
     query = """
     INSERT INTO secure_users
-    (username, email_cipher, email_nonce, password_cipher, password_nonce)
-    VALUES (%s, %s, %s, %s, %s)
+    (username,
+     email_cipher, email_nonce, email_key_version,
+     password_cipher, password_nonce, password_key_version)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
     """
 
     cur.execute(query, (
         username,
         email_cipher,
         email_nonce,
+        email_key_version,
         pass_cipher,
-        pass_nonce
+        pass_nonce,
+        pass_key_version
     ))
     conn.commit()
 
 
 
 # Simulate real encryption
-nonce, ciphertext = encrypt_data("Employee Salary: 300000")
+nonce, ciphertext, key_version = encrypt_data("Employee Salary: 300000")
 
 SHARD_DATA = [
     {
-        "id": "s1-1",
+        "id": "s3-1",
         "tokens": ["token_salary", "token_bonus"],
         "nonce": nonce,
-        "ciphertext": ciphertext
+        "ciphertext": ciphertext,
+        "key_version": key_version
     }
 ]
 
