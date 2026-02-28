@@ -139,7 +139,7 @@ plaintext = decrypt_data(nonce, cipher, version)
 print("Decrypted:", plaintext)
 '''
 
-
+'''
 # week 3 key rotation test
 from app.crypto.encrypt import key_manager
 
@@ -149,3 +149,41 @@ print("Rotating key...")
 key_manager.rotate_key()
 
 print("New Key Version:", key_manager.current_version)
+'''
+
+# week 3 secure read + controlled decryption test with shard routing
+
+'''from app.db.secure_query import SecureQueryEngine
+engine = SecureQueryEngine()
+print("\nUser sarbasish:")
+print(engine.secure_read(
+    ["token_salary", "token_bonus"],
+    user_role="admin",
+    user_identifier="sarbasish"
+))
+print("\nUser kunal:")
+print(engine.secure_read(
+    ["token_salary", "token_bonus"],
+    user_role="admin",
+    user_identifier="kunal"
+))'''
+
+'''
+from app.coordinator.shard_insert_router import ShardInsertRouter
+
+router = ShardInsertRouter()
+
+router.insert_user("sarbasish", "sarbasish", "s@email.com", "pass1")
+router.insert_user("kunal", "kunal", "k@email.com", "pass2")
+router.insert_user("rohit", "rohit", "r@email.com", "pass3")
+'''
+
+from app.coordinator.query_router import ShardRouter
+
+router = ShardRouter()
+
+users = ["sarbasish", "kunal", "rohit"]
+
+for u in users:
+    shard = router.route(u)
+    print(f"{u} → {shard.__name__}")
