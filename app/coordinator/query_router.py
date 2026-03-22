@@ -22,4 +22,4 @@ class ShardRouter:
 
         shard_index = hash_value % len(self.shards)
 
-        return self.shards[shard_index]
+        return self.shards[shard_index], shard_index

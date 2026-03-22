@@ -87,7 +87,7 @@ class SecureQueryEngine:
             raise PermissionError("Unauthorized search attempt")
 
         # 🔄 Route to correct shard
-        shard = self.router.route(user_identifier)
+        shard, shard_index = self.router.route(user_identifier)
 
         results = []
         shard_data = shard.read_all()
@@ -96,7 +96,7 @@ class SecureQueryEngine:
             if all(td in record["tokens"] for td in trapdoors):
                 results.append(record)
 
-        return results
+        return results, shard_index
 
     # --------------------------
     # Secure Read with Decrypt
@@ -108,7 +108,7 @@ class SecureQueryEngine:
         user_identifier: str
     ) -> List[Dict]:
 
-        encrypted_results = self.and_search(
+        encrypted_results, shard_index = self.and_search(
             trapdoors,
             user_role,
             user_identifier
@@ -116,7 +116,7 @@ class SecureQueryEngine:
 
         # 🔐 If no decrypt permission → return ciphertext only
         if not self.rbac.authorize(user_role, "decrypt"):
-            return encrypted_results
+            return encrypted_results, shard_index
 
         # 👑 Admin or decrypt-capable role
         decrypted_results = []
@@ -132,4 +132,4 @@ class SecureQueryEngine:
 
             decrypted_results.append(decrypted_record)
 
-        return decrypted_results
+        return decrypted_results, shard_index

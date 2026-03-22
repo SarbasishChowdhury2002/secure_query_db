@@ -193,6 +193,8 @@ for u in users:
 import time
 from app.crypto.search import SearchableEncryption
 from app.db.secure_query import SecureQueryEngine
+from app.utils.logger import log_query
+from app.utils.logger import log_query_csv
 
 # ==============================
 # CONFIG
@@ -243,19 +245,44 @@ def run_pipeline():
 
     start = time.time()
 
-    results = engine.secure_read(
+    '''results = engine.secure_read(
         trapdoors=trapdoors,
         user_role=user_role,
         #user_role = "guest",  # Testing with unauthorized role to show access control
         #user_role = "analyst", # Testing with analyst role that has read access but no decryption
         user_identifier=user_identifier
         #user_identifier = "rohit" # Testing with a user that has no relevant data to show empty results case
+    )'''
+
+    results, shard_index = engine.secure_read(
+        trapdoors=trapdoors,
+        user_role=user_role,
+        user_identifier=user_identifier
     )
 
 
     end = time.time()
 
-    print(f"\nQuery Time: {round(end - start, 6)} seconds")
+    query_time = round(end - start, 6)
+
+    # ✅ LOGGING HERE
+    log_query(
+        user=user_identifier,
+        role=user_role,
+        keywords=keywords,
+        shard=f"shard{shard_index+1}",
+        query_time=query_time
+    )
+
+    log_query_csv(
+        user=user_identifier,
+        role=user_role,
+        keywords=keywords,
+        shard=f"shard{shard_index+1}",
+        query_time=query_time
+    )
+
+    print(f"\nQuery Time: {query_time} seconds")
 
     # --------------------------
     # Step 5: Output Results
