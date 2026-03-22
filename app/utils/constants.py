@@ -1,0 +1,1 @@
+SEARCH_KEY = b"week3-secret-key"

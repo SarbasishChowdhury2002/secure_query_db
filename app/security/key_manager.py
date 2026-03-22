@@ -39,3 +39,8 @@ class KeyManager:
     def rotate_key(self):
         self.current_version += 1
         self.keys[self.current_version] = self._generate_key()
+
+
+
+# Global singleton instance
+key_manager = KeyManager()

@@ -178,6 +178,7 @@ router.insert_user("kunal", "kunal", "k@email.com", "pass2")
 router.insert_user("rohit", "rohit", "r@email.com", "pass3")
 '''
 
+'''
 from app.coordinator.query_router import ShardRouter
 
 router = ShardRouter()
@@ -187,3 +188,99 @@ users = ["sarbasish", "kunal", "rohit"]
 for u in users:
     shard = router.route(u)
     print(f"{u} → {shard.__name__}")
+'''
+
+import time
+from app.crypto.search import SearchableEncryption
+from app.db.secure_query import SecureQueryEngine
+
+# ==============================
+# CONFIG
+# ==============================
+#SEARCH_KEY = b"week3-secret-key"
+from app.utils.constants import SEARCH_KEY
+
+# ==============================
+# MAIN PIPELINE TEST
+# ==============================
+
+def run_pipeline():
+
+    print("\n===== SYSTEM TEST: END-TO-END PIPELINE =====\n")
+
+    # --------------------------
+    # Step 1: Initialize Search Encryption
+    # --------------------------
+    se = SearchableEncryption(SEARCH_KEY)
+
+    # --------------------------
+    # Step 2: Define Query
+    # --------------------------
+    user_identifier = "sarbasish"
+    user_role = "admin"
+
+    keywords = ["salary", "bonus"]
+
+    #keywords = ["unknown"] # Testing with a keyword that doesn't exist to show no results case
+
+    print("User:", user_identifier)
+    print("Role:", user_role)
+    print("Keywords:", keywords)
+
+    # --------------------------
+    # Step 3: Generate Trapdoors
+    # --------------------------
+    trapdoors = se.generate_and_trapdoor(keywords)
+
+    print("\nTrapdoors:")
+    for t in trapdoors:
+        print(t)
+
+    # --------------------------
+    # Step 4: Execute Secure Query
+    # --------------------------
+    engine = SecureQueryEngine()
+
+    start = time.time()
+
+    results = engine.secure_read(
+        trapdoors=trapdoors,
+        user_role=user_role,
+        #user_role = "guest",  # Testing with unauthorized role to show access control
+        #user_role = "analyst", # Testing with analyst role that has read access but no decryption
+        user_identifier=user_identifier
+        #user_identifier = "rohit" # Testing with a user that has no relevant data to show empty results case
+    )
+
+
+    end = time.time()
+
+    print(f"\nQuery Time: {round(end - start, 6)} seconds")
+
+    # --------------------------
+    # Step 5: Output Results
+    # --------------------------
+    print("\n===== RESULTS =====\n")
+
+    if not results:
+        print("❌ No results found")
+        return
+
+    for i, r in enumerate(results, 1):
+        print(f"Result {i}:")
+        print("ID:", r.get("id"))
+
+        if "plaintext" in r:
+            print("Decrypted:", r["plaintext"])
+        else:
+            print("Ciphertext only (no permission)")
+
+        print("-" * 40)
+
+
+# ==============================
+# ENTRY POINT
+# ==============================
+
+if __name__ == "__main__":
+    run_pipeline()

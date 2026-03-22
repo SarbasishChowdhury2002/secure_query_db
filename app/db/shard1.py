@@ -1,6 +1,12 @@
 import psycopg2
 from app.crypto.encrypt import encrypt_data
 
+from app.crypto.search import SearchableEncryption
+
+from app.utils.constants import SEARCH_KEY
+
+se = SearchableEncryption(SEARCH_KEY)
+
 conn = psycopg2.connect(
     dbname="shard1",
     user="postgres",
@@ -58,7 +64,10 @@ nonce, ciphertext, key_version = encrypt_data("Employee Salary: 100000")
 SHARD_DATA = [
     {
         "id": "s1-1",
-        "tokens": ["token_salary", "token_bonus"],
+        "tokens": [
+            se.generate_token("salary"),
+            se.generate_token("bonus")
+        ],
         "nonce": nonce,
         "ciphertext": ciphertext,
         "key_version": key_version

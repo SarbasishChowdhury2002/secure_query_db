@@ -6,11 +6,11 @@ before database insertion.
 
 import os
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from app.security.key_manager import KeyManager
+#from app.security.key_manager import KeyManager
 
 
 # Initialize global key manager
-key_manager = KeyManager()
+from app.security.key_manager import key_manager
 
 '''
 KEY_FILE = "aes.key"
