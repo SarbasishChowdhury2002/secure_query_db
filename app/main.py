@@ -190,11 +190,13 @@ for u in users:
     print(f"{u} → {shard.__name__}")
 '''
 
+import hashlib
 import time
 from app.crypto.search import SearchableEncryption
 from app.db.secure_query import SecureQueryEngine
 from app.utils.logger import log_query
 from app.utils.logger import log_query_csv
+from app.blockchain.ledger import BlockchainLogger
 
 # ==============================
 # CONFIG
@@ -205,6 +207,8 @@ from app.utils.constants import SEARCH_KEY
 # ==============================
 # MAIN PIPELINE TEST
 # ==============================
+
+blockchain = BlockchainLogger()
 
 def run_pipeline():
 
@@ -241,6 +245,10 @@ def run_pipeline():
     # --------------------------
     # Step 4: Execute Secure Query
     # --------------------------
+
+    query_string = f"{user_identifier}:{keywords}"
+    query_hash = hashlib.sha256(query_string.encode()).hexdigest()
+
     engine = SecureQueryEngine()
 
     start = time.time()
@@ -284,6 +292,15 @@ def run_pipeline():
 
     print(f"\nQuery Time: {query_time} seconds")
 
+    result_string = str(results)
+    result_hash = hashlib.sha256(result_string.encode()).hexdigest()
+
+    block = blockchain.add_block(query_hash, result_hash)
+
+    print("\n🔗 Blockchain Entry:")
+    print("Block Hash:", block.hash)
+    print("Previous Hash:", block.prev_hash)
+
     # --------------------------
     # Step 5: Output Results
     # --------------------------
@@ -303,7 +320,6 @@ def run_pipeline():
             print("Ciphertext only (no permission)")
 
         print("-" * 40)
-
 
 # ==============================
 # ENTRY POINT
