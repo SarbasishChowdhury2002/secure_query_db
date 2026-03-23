@@ -301,6 +301,10 @@ def run_pipeline():
     print("Block Hash:", block.hash)
     print("Previous Hash:", block.prev_hash)
 
+    is_valid = blockchain.verify_chain()
+
+    print("\n🔍 Blockchain Status:", "✅ VALID" if is_valid else "❌ TAMPERED")
+
     # --------------------------
     # Step 5: Output Results
     # --------------------------
