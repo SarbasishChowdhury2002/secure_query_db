@@ -197,6 +197,7 @@ from app.db.secure_query import SecureQueryEngine
 from app.utils.logger import log_query
 from app.utils.logger import log_query_csv
 from app.blockchain.ledger import BlockchainLogger
+from app.utils.access_pattern import AccessPatternTracker
 
 # ==============================
 # CONFIG
@@ -209,6 +210,9 @@ from app.utils.constants import SEARCH_KEY
 # ==============================
 
 blockchain = BlockchainLogger()
+
+tracker = AccessPatternTracker()
+
 
 def run_pipeline():
 
@@ -228,6 +232,16 @@ def run_pipeline():
     keywords = ["salary", "bonus"]
 
     #keywords = ["unknown"] # Testing with a keyword that doesn't exist to show no results case
+
+    '''
+    queries = [         # Testing access pattern leakage with repeated queries
+        ["salary"],
+        ["salary"],
+        ["salary", "bonus"],
+        ["bonus"],
+        ["salary"],
+    ]
+    '''
 
     print("User:", user_identifier)
     print("Role:", user_role)
@@ -290,6 +304,9 @@ def run_pipeline():
         query_time=query_time
     )
 
+
+    tracker.record_access(keywords)
+
     print(f"\nQuery Time: {query_time} seconds")
 
     result_string = str(results)
@@ -324,6 +341,33 @@ def run_pipeline():
             print("Ciphertext only (no permission)")
 
         print("-" * 40)
+
+
+    '''
+    for keywords in queries:                # Testing access pattern leakage with repeated queries
+        print("\nRunning Query:", keywords)
+        
+        trapdoors = se.generate_and_trapdoor(keywords)
+
+        start = time.time()
+
+        results, shard_index = engine.secure_read(
+            trapdoors=trapdoors,
+            user_role=user_role,
+            user_identifier=user_identifier
+        )
+
+        end = time.time()
+
+        query_time = round(end - start, 6)
+
+        log_query(...)
+        log_query_csv(...)
+
+        tracker.record_access(keywords)
+    '''
+
+    tracker.print_patterns()
 
 # ==============================
 # ENTRY POINT
