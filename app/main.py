@@ -193,11 +193,13 @@ for u in users:
 import hashlib
 import time
 from app.crypto.search import SearchableEncryption
+from app.db import shard1
 from app.db.secure_query import SecureQueryEngine
 from app.utils.logger import log_query
 from app.utils.logger import log_query_csv
 from app.blockchain.ledger import BlockchainLogger
 from app.utils.access_pattern import AccessPatternTracker
+from app.experiments.dataset_generator import generate_dataset
 
 # ==============================
 # CONFIG
@@ -228,6 +230,9 @@ def run_pipeline():
     # --------------------------
     user_identifier = "sarbasish"
     user_role = "admin"
+
+    dataset = generate_dataset(1000)   # 1K dataset
+    shard1.load_dataset(dataset)
 
     keywords = ["salary", "bonus"]
 

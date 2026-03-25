@@ -77,3 +77,22 @@ SHARD_DATA = [
 
 def read_all():
     return SHARD_DATA
+
+
+def load_dataset(dataset):
+    global SHARD_DATA
+
+    SHARD_DATA = []
+
+    for record in dataset:
+        nonce, ciphertext, key_version = encrypt_data(record["text"])
+
+        tokens = [se.generate_token(k) for k in record["keywords"]]
+
+        SHARD_DATA.append({
+            "id": record["id"],
+            "tokens": tokens,
+            "nonce": nonce,
+            "ciphertext": ciphertext,
+            "key_version": key_version
+        })
