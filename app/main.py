@@ -195,11 +195,15 @@ import time
 from app.crypto.search import SearchableEncryption
 from app.db import shard1
 from app.db.secure_query import SecureQueryEngine
+from app.experiments.benchmark import run_benchmark
 from app.utils.logger import log_query
 from app.utils.logger import log_query_csv
 from app.blockchain.ledger import BlockchainLogger
 from app.utils.access_pattern import AccessPatternTracker
 from app.experiments.dataset_generator import generate_dataset
+
+
+from app.experiments.benchmark import run_benchmark
 
 # ==============================
 # CONFIG
@@ -374,9 +378,17 @@ def run_pipeline():
 
     tracker.print_patterns()
 
+
 # ==============================
 # ENTRY POINT
 # ==============================
 
 if __name__ == "__main__":
-    run_pipeline()
+    # Choose mode
+
+    # 🔹 Demo Mode
+    #run_pipeline()
+
+    # 🔹 Benchmark Mode (uncomment when needed)
+    run_benchmark()
+    
