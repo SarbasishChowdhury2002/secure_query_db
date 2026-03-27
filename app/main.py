@@ -204,6 +204,7 @@ from app.experiments.dataset_generator import generate_dataset
 
 
 from app.experiments.benchmark import run_benchmark
+from app.experiments.keyword_benchmark import run_keyword_benchmark
 
 # ==============================
 # CONFIG
@@ -390,5 +391,9 @@ if __name__ == "__main__":
     #run_pipeline()
 
     # 🔹 Benchmark Mode (uncomment when needed)
-    run_benchmark()
+    #run_benchmark()
+
+    run_keyword_benchmark()
+
+
     
