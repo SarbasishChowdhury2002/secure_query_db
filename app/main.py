@@ -205,6 +205,7 @@ from app.experiments.dataset_generator import generate_dataset
 
 from app.experiments.benchmark import run_benchmark
 from app.experiments.keyword_benchmark import run_keyword_benchmark
+from app.experiments.shard_benchmark import run_shard_benchmark
 
 # ==============================
 # CONFIG
@@ -393,7 +394,8 @@ if __name__ == "__main__":
     # 🔹 Benchmark Mode (uncomment when needed)
     #run_benchmark()
 
-    run_keyword_benchmark()
+    #run_keyword_benchmark()
 
+    run_shard_benchmark()
 
     

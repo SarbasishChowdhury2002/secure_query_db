@@ -1,6 +1,12 @@
 import psycopg2
 from app.crypto.encrypt import encrypt_data
 
+from app.crypto.search import SearchableEncryption
+
+from app.utils.constants import SEARCH_KEY
+
+se = SearchableEncryption(SEARCH_KEY)
+
 conn = psycopg2.connect(
     dbname="shard3",
     user="postgres",
@@ -43,7 +49,7 @@ def insert_user(username, email, password):
 # Simulate real encryption
 nonce, ciphertext, key_version = encrypt_data("Employee Salary: 300000")
 
-SHARD_DATA = [
+'''SHARD_DATA = [
     {
         "id": "s3-1",
         "tokens": ["token_salary", "token_bonus"],
@@ -51,8 +57,30 @@ SHARD_DATA = [
         "ciphertext": ciphertext,
         "key_version": key_version
     }
-]
+]'''
+
+# In-memory shard storage for experiments
+SHARD_DATA = []
 
 
 def read_all():
     return SHARD_DATA
+
+
+def load_dataset(dataset):
+    global SHARD_DATA
+
+    SHARD_DATA = []
+
+    for record in dataset:
+        nonce, ciphertext, key_version = encrypt_data(record["text"])
+
+        tokens = [se.generate_token(k) for k in record["keywords"]]
+
+        SHARD_DATA.append({
+            "id": record["id"],
+            "tokens": tokens,
+            "nonce": nonce,
+            "ciphertext": ciphertext,
+            "key_version": key_version
+        })

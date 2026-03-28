@@ -64,7 +64,7 @@ from typing import List, Dict
 from app.auth.rbac import RBAC
 from app.crypto.encrypt import decrypt_data
 from app.coordinator.query_router import ShardRouter
-
+from concurrent.futures import ThreadPoolExecutor
 
 class SecureQueryEngine:
 
@@ -133,3 +133,32 @@ class SecureQueryEngine:
             decrypted_results.append(decrypted_record)
 
         return decrypted_results, shard_index
+    
+
+    def multi_shard_search(self, trapdoors, user_role, num_shards):
+
+        if not self.rbac.authorize(user_role, "search"):
+            raise PermissionError("Unauthorized search")
+
+        selected_shards = self.router.shards[:num_shards]
+
+        def search_shard(shard):
+            results = []
+            shard_data = shard.read_all()
+
+            for record in shard_data:
+                if all(td in record["tokens"] for td in trapdoors):
+                    results.append(record)
+
+            return results
+
+        # 🔥 Parallel execution
+        all_results = []
+
+        with ThreadPoolExecutor() as executor:
+            results_list = executor.map(search_shard, selected_shards)
+
+        for r in results_list:
+            all_results.extend(r)
+
+        return all_results

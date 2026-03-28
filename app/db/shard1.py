@@ -61,7 +61,7 @@ SHARD_DATA = [
 # Simulate real encryption
 nonce, ciphertext, key_version = encrypt_data("Employee Salary: 100000")
 
-SHARD_DATA = [
+'''SHARD_DATA = [
     {
         "id": "s1-1",
         "tokens": [
@@ -72,7 +72,10 @@ SHARD_DATA = [
         "ciphertext": ciphertext,
         "key_version": key_version
     }
-]
+]'''
+
+# In-memory shard storage for experiments
+SHARD_DATA = []
 
 
 def read_all():
