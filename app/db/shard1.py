@@ -3,16 +3,21 @@ from app.crypto.encrypt import encrypt_data
 
 from app.crypto.search import SearchableEncryption
 
-from app.utils.constants import SEARCH_KEY
+#from app.utils.constants import SEARCH_KEY
 
-se = SearchableEncryption(SEARCH_KEY)
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+search_key = os.getenv("SEARCH_KEY")
+se = SearchableEncryption(search_key)
 
 conn = psycopg2.connect(
     dbname="shard1",
     user="postgres",
-    password="2002",
-    host="localhost",
-    port="5432"
+    password=os.getenv("DB_PASSWORD"),
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT")
 )
 
 cur = conn.cursor()

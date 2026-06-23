@@ -8,6 +8,8 @@ __pycache__/
 # Encryption key (must NEVER be committed)
 aes.key
 
+.env
+
 # OS / editor junk
 .DS_Store
 .vscode/

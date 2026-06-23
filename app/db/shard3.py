@@ -3,23 +3,29 @@ from app.crypto.encrypt import encrypt_data
 
 from app.crypto.search import SearchableEncryption
 
-from app.utils.constants import SEARCH_KEY
+#from app.utils.constants import SEARCH_KEY
 
-se = SearchableEncryption(SEARCH_KEY)
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+search_key = os.getenv("SEARCH_KEY")
+
+se = SearchableEncryption(search_key)
 
 conn = psycopg2.connect(
     dbname="shard3",
     user="postgres",
-    password="2002",
-    host="localhost",
-    port="5432"
+    password=os.getenv("DB_PASSWORD"),
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT")
 )
 
 cur = conn.cursor()
 
 def insert_user(username, email, password):
     """
-    Inserts encrypted user data into shard2.
+    Inserts encrypted user data into shard3.
     Shard selection logic will be handled by the coordinator layer.
     """
     email_nonce, email_cipher, email_key_version = encrypt_data(email)
