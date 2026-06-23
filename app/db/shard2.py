@@ -9,15 +9,15 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-search_key = os.getenv("SEARCH_KEY")
+search_key = os.getenv("SEARCH_KEY").encode() if os.getenv("SEARCH_KEY") else None
 se = SearchableEncryption(search_key)
 
 conn = psycopg2.connect(
     dbname="shard2",
     user="postgres",
     password=os.getenv("DB_PASSWORD"),
-    host=os.getenv("DB_HOST"),
-    port=os.getenv("DB_PORT")
+    host=os.getenv("DB_HOST", "localhost"),
+    port=os.getenv("DB_PORT", "5432")
 )
 
 cur = conn.cursor()
