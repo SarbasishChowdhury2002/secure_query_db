@@ -1,7 +1,5 @@
+from app.config import get_settings
 
-import os
-from dotenv import load_dotenv
+settings = get_settings()
 
-load_dotenv()
-
-SEARCH_KEY = os.getenv("SEARCH_KEY", "fallback-key").encode()
+SEARCH_KEY = settings.SEARCH_KEY.encode()
