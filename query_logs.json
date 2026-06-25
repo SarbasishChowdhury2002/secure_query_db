@@ -1,3 +1,7 @@
 {"timestamp": "2026-03-24T18:42:37.401819", "user": "sarbasish", "role": "admin", "keywords": ["salary", "bonus"], "keyword_count": 2, "shard": "shard1", "query_time": 0.001}
 {"timestamp": "2026-03-25T16:00:28.192912", "user": "sarbasish", "role": "admin", "keywords": ["salary", "bonus"], "keyword_count": 2, "shard": "shard1", "query_time": 0.001001}
 {"timestamp": "2026-06-25T02:25:07.686577", "user": "sarbasish", "role": "admin", "keywords": ["salary", "bonus"], "keyword_count": 2, "shard": "shard1", "query_time": 0.0}
+{"timestamp": "2026-06-26T00:59:56.028486", "user": "sarbasish", "role": "admin", "keywords": ["salary", "bonus"], "keyword_count": 2, "shard": "shard1", "query_time": 0.0}
+{"timestamp": "2026-06-26T01:02:47.369912", "user": "sarbasish", "role": "admin", "keywords": ["salary", "bonus"], "keyword_count": 2, "shard": "shard1", "query_time": 0.0}
+{"timestamp": "2026-06-26T01:03:09.203514", "user": "sarbasish", "role": "admin", "keywords": ["salary", "bonus"], "keyword_count": 2, "shard": "shard1", "query_time": 0.000974}
+{"timestamp": "2026-06-26T01:06:13.366555", "user": "sarbasish", "role": "admin", "keywords": ["salary", "bonus"], "keyword_count": 2, "shard": "shard1", "query_time": 0.0}

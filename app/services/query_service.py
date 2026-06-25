@@ -87,9 +87,18 @@ class QueryService:
 
         block = self.blockchain.add_block(query_hash, result_hash)
 
-        # Step 6: Return everything the UI needs
+        # Step 6: Clean results for JSON serialization (remove raw bytes)
+        clean_results = []
+        for r in results:
+            clean_results.append({
+                "id": r.get("id"),
+                "plaintext": r.get("plaintext", None),
+                "key_version": r.get("key_version")
+            })
+
+        # Return everything the UI needs
         return {
-            "results": results,
+            "results": clean_results,
             "shard_index": shard_index,
             "shard_name": shard_name,
             "query_time": query_time,

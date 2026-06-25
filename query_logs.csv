@@ -2,3 +2,7 @@ timestamp,user,role,keyword_count,shard,query_time
 2026-03-24T18:42:37.402820,sarbasish,admin,2,shard1,0.001
 2026-03-25T16:00:28.192912,sarbasish,admin,2,shard1,0.001001
 2026-06-25T02:25:07.689576,sarbasish,admin,2,shard1,0.0
+2026-06-26T00:59:56.030491,sarbasish,admin,2,shard1,0.0
+2026-06-26T01:02:47.370916,sarbasish,admin,2,shard1,0.0
+2026-06-26T01:03:09.204516,sarbasish,admin,2,shard1,0.000974
+2026-06-26T01:06:13.370057,sarbasish,admin,2,shard1,0.0
