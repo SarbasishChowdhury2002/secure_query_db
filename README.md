@@ -1,161 +1,206 @@
 # 🔐 Secure Query Processing over Encrypted and Sharded Databases
 
+> CS850 – Database Security | NITK Surathkal  
+> Sarbasish Chowdhury (252IS033)
+
+---
+
 ## 📌 Overview
 
-This project implements a **secure, scalable query system** that enables searching over **encrypted data** stored across **sharded databases**, while preserving confidentiality and access control.
+A secure, scalable query system that enables keyword search over **AES-256-GCM encrypted data** stored across **sharded databases**, without exposing plaintext to the database layer.
 
-It integrates:
-- 🔒 Encryption (AES-256-GCM)
-- 🔍 Searchable Encryption (HMAC-based)
-- 🧠 Secure Query Processing
-- 📦 Sharding
-- 🛡️ Role-Based Access Control (RBAC)
-- 🔗 Blockchain-based Audit Logging
-- 🎨 Streamlit UI for real-time interaction
+**End-to-end pipeline:**
+User Query → Trapdoor Generation → Shard Routing → Encrypted Search → Decryption → Audit Log
 
-
-## 🎯 Problem Statement
-Traditional databases cannot efficiently query encrypted data without exposing sensitive information.
-
-This project solves:
-- Secure search over encrypted data
-- Privacy-preserving query execution
-- Scalable querying using sharding
-- Controlled access using RBAC
-
-
-## ⚙️ System Architecture
-
-User → Trapdoor Generation → Query Coordinator → Shard Routing → Encrypted Search → Decryption → Blockchain Logging
-
+---
 
 ## 🚀 Key Features
 
-### 🔐 Encryption
-- AES-256-GCM encryption
-- Data encrypted at application layer
-- Keys never stored in database
+| Feature | Implementation |
+|---|---|
+| Encryption | AES-256-GCM, application-layer, unique nonce per record |
+| Searchable Encryption | HMAC-SHA256 tokens — keywords never exposed to DB |
+| Trapdoor Queries | Client generates trapdoor; shard matches on encrypted tokens |
+| Multi-keyword AND Search | All tokens must match — improves precision and speed |
+| Shard Routing | Deterministic SHA-256 hashing: `Shard(U) = SHA256(U) mod N` |
+| RBAC | Admin / Analyst / Auditor — separate search and decrypt permissions |
+| Key Management | Versioned AES keys, supports rotation without re-encryption |
+| Audit Logging | Tamper-evident hash chain (SHA-256 linked blocks) |
+| REST API | FastAPI with auto-generated interactive docs at `/docs` |
+| UI | Streamlit interactive interface |
 
-### 🔍 Searchable Encryption
-- Keywords converted into HMAC tokens
-- Enables search without revealing plaintext
+---
 
-### 🔑 Trapdoor Queries
-- Query keywords converted into secure trapdoors
-- Matching done on encrypted tokens
+## ⚙️ Setup
 
-### 🔎 Multi-keyword AND Search
-- Supports multiple keyword queries
-- Improves precision and efficiency
+### 1. Clone and install
+```bash
+git clone <repo-url>
+cd secure_query_db
+python -m venv venv
+venv\Scripts\activate        # Windows
+pip install -r requirements.txt
+```
 
-### 📦 Sharding
-- Deterministic routing using SHA-256 hashing
-- Improves scalability and reduces load
+### 2. Create `.env` in project root
+```env
+SEARCH_KEY=your-secret-key-here
+DB_PASSWORD=your-db-password
+DB_HOST=localhost
+DB_PORT=5432
+```
 
-### 🛡️ RBAC (Access Control)
-- Admin / Analyst / User roles
-- Separate permissions for search and decryption
-
-### 🔄 Key Management
-- Versioned encryption keys
-- Supports secure key rotation
-
-### 🔗 Blockchain Logging
-- Query and result hashes stored in hash chain
-- Ensures tamper-proof audit logs
-
-### 🎨 UI (Streamlit)
-- Interactive query interface
-- Displays:
-  - Trapdoors
-  - Selected shard
-  - Query time
-  - Results
-  - Blockchain logs
-
-
-
-## 📊 Experimental Evaluation
-
-Experiments conducted on:
-- Dataset sizes: 1K, 5K, 10K
-- Keyword variations (1, 2, 3 keywords)
-- Shard configurations (1, 2, 3 shards)
-
-### Observations:
-- Query time increases with dataset size
-- Multi-keyword queries reduce result size → faster queries
-- Sharding improves scalability (limited by system constraints)
-
-
-
-## 🧪 Tech Stack
-
-- Python
-- Streamlit
-- PostgreSQL
-- Cryptography (AES-GCM)
-- Passlib (bcrypt)
-- Hashlib / HMAC
-
-
-
-## 📁 Project Structure
-
-secure_query_db/
-│
-├── app/
-│ ├── auth/
-│ ├── blockchain/
-│ ├── coordinator/
-│ ├── crypto/
-│ ├── db/
-│ ├── experiments/
-│ ├── ui/
-│
-├── report/
-├── requirements.txt
-└── README.md
-
-
+---
 
 ## ▶️ How to Run
 
-1. Clone repository
-git clone <repo-link>
-cd secure_query_db
-2. Install dependencies
-pip install -r requirements.txt
-3. Run the application
-streamlit run app/ui/app.py
+### Streamlit UI
+```bash
+streamlit run app/ui/application.py
+```
+Opens at `http://localhost:8501`
 
-### 🖥️ Demo Flow
-Enter User ID and Role
-Input keywords (comma-separated)
-Run query
+### REST API
+```bash
+uvicorn app.api.routes:app --reload
+```
+- API: `http://127.0.0.1:8000`
+- Interactive docs: `http://127.0.0.1:8000/docs`
 
-### System performs:
-Trapdoor generation
-Shard routing
-Encrypted search
-Decryption (if authorized)
-Blockchain logging
+### API Usage Example
+```bash
+curl -X POST http://127.0.0.1:8000/query \
+  -H "Content-Type: application/json" \
+  -d '{"user_identifier": "sarbasish", "user_role": "admin", "keywords": ["salary", "bonus"]}'
+```
 
-### 🔐 Security Analysis
-Data remains encrypted at rest
-Keywords never exposed
-RBAC enforces controlled access
-Blockchain ensures log integrity
+### Run Tests
+```bash
+pytest tests/test_pipeline.py -v --cov=app --cov-report=term-missing
+```
 
-### ⚠️ Limitation:
-Access pattern leakage possible (common in searchable encryption systems)
+### Run Demo Pipeline
+```bash
+python -m app.main
+```
 
-### 🚀 Future Work
-OR-based queries
-Ranked search
-Full distributed deployment
-Advanced leakage prevention techniques
+### Run Benchmarks
+```bash
+python -m app.main --benchmark           # Dataset size vs query time
+python -m app.main --keyword-benchmark   # Keyword count vs query time
+python -m app.main --shard-benchmark     # Shard count vs query time
+```
 
-### 👨‍💻 Authors
-Sarbasish Chowdhury
-Kunal Lagad
+---
+
+## 🧪 Test Results
+tests/test_pipeline.py::test_encrypt_decrypt_roundtrip          PASSED
+
+tests/test_pipeline.py::test_trapdoor_matches_token             PASSED
+
+tests/test_pipeline.py::test_different_keywords_different_tokens PASSED
+
+tests/test_pipeline.py::test_multi_keyword_trapdoor_count       PASSED
+
+tests/test_pipeline.py::test_admin_can_search_and_decrypt       PASSED
+
+tests/test_pipeline.py::test_analyst_cannot_decrypt             PASSED
+
+tests/test_pipeline.py::test_unknown_role_rejected              PASSED
+
+tests/test_pipeline.py::test_shard_routing_is_deterministic     PASSED
+
+tests/test_pipeline.py::test_different_users_can_route_differently PASSED
+9 passed | Coverage: rbac.py 100%, crypto/search.py 100%, query_router.py 100%
+
+---
+
+## 📊 Experimental Results
+
+### Dataset Size vs Query Time
+| Dataset Size | Query Time (sec) |
+|---|---|
+| 1,000 | 0.001001 |
+| 5,000 | 0.002972 |
+| 10,000 | 0.010998 |
+
+### Keywords vs Query Time
+| Keywords | Query Time (sec) |
+|---|---|
+| 1 | 0.023597 |
+| 2 | 0.008600 |
+| 3 | 0.007202 |
+
+> More keywords = faster queries due to AND-filtering reducing result set size.
+
+### Shards vs Query Time
+| Shards | Query Time (sec) |
+|---|---|
+| 1 | 0.007004 |
+| 2 | 0.006251 |
+| 3 | 0.006331 |
+
+> 3-shard overhead explained by Python GIL limiting ThreadPoolExecutor on in-memory data.
+
+---
+
+## 🔐 Security Analysis
+
+| Attack | Traditional DB | This System |
+|---|---|---|
+| DB breach | All plaintext exposed | Only ciphertext visible |
+| Keyword inference | Query logs reveal keywords | Only HMAC tokens visible |
+| Privilege escalation | No enforcement | RBAC blocks decryption |
+| Log tampering | Undetected | Hash chain breaks — detected |
+| Password theft | Plaintext or weak hash | bcrypt — unrecoverable |
+
+**Known limitation:** Access pattern leakage — query frequency and co-occurrence can be inferred without learning keywords. Academic solution: OXT protocol (Cash et al., 2013).
+
+---
+
+## 📁 Project Structure
+secure_query_db/
+
+├── app/
+
+│   ├── api/routes.py              # FastAPI REST endpoints
+
+│   ├── auth/rbac.py               # Role-based access control
+
+│   ├── blockchain/ledger.py       # Tamper-evident audit log
+
+│   ├── config.py                  # pydantic-settings configuration
+
+│   ├── coordinator/               # Shard routing
+
+│   ├── crypto/                    # AES-256-GCM + HMAC searchable encryption
+
+│   ├── db/                        # Shard storage + secure query engine
+
+│   ├── experiments/               # Benchmarks + dataset generation
+
+│   ├── security/key_manager.py    # Versioned key management
+
+│   ├── services/query_service.py  # Service layer (pipeline orchestration)
+
+│   ├── ui/application.py          # Streamlit UI
+
+│   └── utils/                     # Logger, access pattern tracker
+
+├── tests/test_pipeline.py         # pytest test suite (9 tests)
+
+├── conftest.py                    # pytest configuration
+
+├── report/project_report.docx     # Full technical report
+
+├── requirements.txt
+
+├── .env                           # Secrets — never committed
+
+└── README.md
+
+---
+
+## 🧰 Tech Stack
+
+Python · FastAPI · Streamlit · PostgreSQL · AES-256-GCM · HMAC-SHA256 · bcrypt · pydantic-settings · pytest
